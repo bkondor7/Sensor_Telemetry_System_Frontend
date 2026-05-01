@@ -2,12 +2,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTcpSocket>
+#include <QLabel>
+#include <QPushButton>
+#include <QTextEdit>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QWidget>
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
-QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
@@ -17,7 +19,26 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
+private slots:
+    void onConnectClicked();
+    void onDataRecieved();
+    void onConnected();
+    void onDisconnected();
+    void onSocketError(QAbstractSocket::SocketError error);
+
 private:
-    Ui::MainWindow *ui;
+    void buildUI();
+    void parseAndDisplay(const QString& raw);
+
+    QTcpSocket* m_socket;
+
+    // UI Elements
+    QPushButton* m_connectBtn;
+    QLabel* m_tempLabel;
+    QLabel* m_humLabel;
+    QLabel* m_statusLabel;
+    QTextEdit* m_logView;
+    QByteArray m_buffer;  // accumulates partial tcp reads
+
 };
 #endif // MAINWINDOW_H
